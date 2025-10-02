@@ -173,3 +173,39 @@ variable "container_immutability_policy" {
   type        = any
   default     = null
 }
+
+variable "function_app_name" {
+  description = "Name of the Azure Function App."
+  type        = string
+  default     = "func-paycom2bc-prd"
+}
+
+variable "function_app_plan_name" {
+  description = "Name of the Function App flexible consumption plan."
+  type        = string
+  default     = "plan-func-paycom2bc-prd"
+}
+
+variable "function_app_storage_account_name" {
+  description = "Existing storage account to associate with the Function App."
+  type        = string
+  default     = "st0func0paycomm2bc0prd"
+}
+
+variable "function_app_worker_runtime" {
+  description = "Language worker runtime for the Function App."
+  type        = string
+  default     = "dotnet-isolated"
+}
+
+variable "function_app_flex_consumption_workers" {
+  description = "Number of pre-warmed workers for the flexible consumption plan."
+  type        = number
+  default     = 1
+}
+
+variable "function_app_additional_app_settings" {
+  description = "Additional application settings to merge into the Function App configuration."
+  type        = map(string)
+  default     = {}
+}
