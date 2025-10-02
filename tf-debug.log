@@ -1,0 +1,13 @@
+2025-10-02T11:02:55.539-0400 [INFO]  Terraform version: 1.13.3
+2025-10-02T11:02:55.539-0400 [DEBUG] using github.com/hashicorp/go-tfe v1.74.1
+2025-10-02T11:02:55.539-0400 [DEBUG] using github.com/hashicorp/hcl/v2 v2.24.0
+2025-10-02T11:02:55.539-0400 [DEBUG] using github.com/hashicorp/terraform-svchost v0.1.1
+2025-10-02T11:02:55.539-0400 [DEBUG] using github.com/zclconf/go-cty v1.16.3
+2025-10-02T11:02:55.539-0400 [INFO]  Go runtime version: go1.24.5
+2025-10-02T11:02:55.539-0400 [INFO]  CLI args: []string{"C:\\Hashicorp\\terraform\\terraform.exe", "apply", "-parallelism=1"}
+2025-10-02T11:02:55.542-0400 [DEBUG] Attempting to open CLI config file: C:\Users\azureuser\AppData\Roaming\terraform.rc
+2025-10-02T11:02:55.543-0400 [DEBUG] File doesn't exist, but doesn't need to. Ignoring.
+2025-10-02T11:02:55.543-0400 [DEBUG] ignoring non-existing provider search directory terraform.d/plugins
+2025-10-02T11:02:55.543-0400 [DEBUG] ignoring non-existing provider search directory C:\Users\azureuser\AppData\Roaming\terraform.d\plugins
+2025-10-02T11:02:55.545-0400 [DEBUG] ignoring non-existing provider search directory C:\Users\azureuser\AppData\Roaming\HashiCorp\Terraform\plugins
+2025-10-02T11:02:55.545-0400 [INFO]  CLI command args: []string{"apply", "-parallelism=1"}

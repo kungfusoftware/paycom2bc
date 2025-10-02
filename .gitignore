@@ -1,0 +1,32 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Secrets / env
+*.tfvars
+!*.tfvars.example
+*.auto.tfvars
+.env
+*.key
+*.pem
+
+# Python
+__pycache__/
+.venv/
+venv/
+*.pyc
+
+# Node (if present)
+node_modules/
+
+# IDE/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

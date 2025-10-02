@@ -1,0 +1,103 @@
+# ----------------------------
+# Log Analytics Workspace (AVM)
+# ----------------------------
+module "law" {
+  source  = "Azure/avm-res-operationalinsights-workspace/azurerm"
+  version = ">= 0.2.0"
+
+  name                = var.law_name
+  location            = var.location
+  resource_group_name = module.rg.name
+
+  #sku               = "PerGB2018"
+  #retention_in_days = var.law_retention_days
+
+  tags = var.tags
+}
+
+# -----------------------------------------------------
+# Data Collection Rule (AMA) for Servers/Arc (AVM)
+# Streams: WindowsEvent, Syslog, Perf  -> LAW
+# -----------------------------------------------------
+# -- module "dcr" {
+# --   source  = "Azure/avm-res-monitor-datacollectionrule/azurerm"
+# --   version = ">= 0.2.0"
+
+# --   name                = "dcr-servers-${var.env}-${var.location_short}"
+# --   location            = var.location
+# --   resource_group_name = var.resource_group_name
+
+# --   destinations_log_analytics = [{
+# --     name                  = "la"
+# --     workspace_resource_id = module.law.resource_id
+# --   }]
+
+# --   data_flow = [
+# --     {
+# --       streams      = ["Microsoft-Perf", "Microsoft-WindowsEvent"]
+# --       destinations = ["la"]
+# --     },
+# --     {
+# --       streams      = ["Microsoft-Syslog"]
+# --       destinations = ["la"]
+# --     }
+# --   ]
+
+# --   windows_event_logs = [
+# --     # Common channels; tailor to your standards
+# --     { name = "Application",  xpath_queries = ["*"] },
+# --     { name = "System",       xpath_queries = ["*"] },
+# --     { name = "Security",     xpath_queries = ["*"] }
+# --   ]
+
+# --   syslog = {
+# --     facility_names = ["auth", "authpriv", "daemon", "kern", "syslog", "user"]
+# --     log_levels     = ["Debug", "Info", "Notice", "Warning", "Error", "Critical", "Alert", "Emergency"]
+# --   }
+
+# --   performance_counters = [
+# --     { name = "Processor(*)\\% Processor Time",      sampling_frequency_in_seconds = 60 },
+# --     { name = "LogicalDisk(*)\\% Free Space",        sampling_frequency_in_seconds = 60 },
+# --     { name = "Memory\\Available MBytes",            sampling_frequency_in_seconds = 60 },
+# --     { name = "Network Interface(*)\\Bytes Total/sec", sampling_frequency_in_seconds = 60 }
+# --   ]
+
+# --   tags = var.common_tags
+# -- }
+
+# -----------------------------------------------------------------
+# Associate DCR to resources (VMs or Arc servers) via AVM module
+# Provide a list of resource IDs in var.target_resource_ids
+# -----------------------------------------------------------------
+# -- module "dcr_assoc" {
+# --   source  = "Azure/avm-res-monitor-datacollectionruleassociation/azurerm"
+# --   version = ">= 0.2.0"
+
+# --   for_each = toset(var.target_resource_ids)
+
+# --   name                      = "assoc-${replace(each.value, "/","-")}"
+# --   data_collection_rule_id   = module.dcr.resource_id
+# --   target_resource_id        = each.value
+# -- }
+
+# -----------------------------------------------------------------
+# OPTIONAL: Diagnostic Settings to LAW for Function App (Consumption)
+# -----------------------------------------------------------------
+# -- module "diag_functionapp" {
+# --   source  = "Azure/avm-res-monitor-diagnosticsetting/azurerm"
+# --   version = ">= 0.2.0"
+
+# --   count                  = var.Function_app_workflow_id == "" ? 0 : 1
+# --   name                   = "${var.env}-functionapp-diag"
+# --   target_resource_id     = var.Function_app_workflow_id
+# --   log_analytics_destination = {
+# --     workspace_resource_id = module.law.resource_id
+# --   }
+
+# --   enabled_log = [
+# --     { category = "FunctionAppRuntime" },
+# --     { category = "TriggerRuns" },
+# --     { category = "ActionRuns" }
+# --   ]
+# -- }
+

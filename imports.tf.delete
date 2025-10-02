@@ -1,0 +1,18 @@
+# imports.tf (examples — adjust to your code/module addresses)
+import {
+  # Resource Group
+  to = azurerm_resource_group.rg
+  id = "/subscriptions/5b9fc8bf-5fbb-48aa-b4c4-0e912d9c1c17/resourceGroups/rg-paycom-bc-Integration-eus-stg"
+}
+
+# import {
+#   # VNet
+#   to = module.vnet.azurerm_virtual_network.<RESOURCE_NAME_IN_MODULE>
+#   id = "/subscriptions/5b9fc8bf-5fbb-48aa-b4c4-0e912d9c1c17/resourceGroups/rg-paycom-bc-Integration-eus-stg/providers/Microsoft.Network/virtualNetworks/<vnetName>"
+# }
+
+# import {
+#   # Subnet (repeat per subnet)
+#   to = module.vnet.azurerm_subnet.<RESOURCE_NAME_IN_MODULE>["<subnet-key>"]
+#   id = "/subscriptions/5b9fc8bf-5fbb-48aa-b4c4-0e912d9c1c17/resourceGroups/rg-paycom-bc-Integration-eus-stg/providers/Microsoft.Network/virtualNetworks/<vnetName>/subnets/<subnetName>"
+# }
