@@ -18,28 +18,29 @@ module "sa" {
   access_tier              = "Hot"
 
   # Security / network / encryption
-  min_tls_version                    = "TLS1_2"
-  https_traffic_only_enabled         = true
-  public_network_access_enabled      = true
-  cross_tenant_replication_enabled   = false
-  infrastructure_encryption_enabled  = false
-  default_to_oauth_authentication    = true
-  shared_access_key_enabled          = true
-  allow_nested_items_to_be_public    = true
-  allowed_copy_scope                 = "PrivateLink"
-  is_hns_enabled                     = false
-  large_file_share_enabled           = true
+  min_tls_version                   = "TLS1_2"
+  https_traffic_only_enabled        = true
+  public_network_access_enabled     = true
+  network_rules                     = null # or { default_action = "Allow" }
+  cross_tenant_replication_enabled  = false
+  infrastructure_encryption_enabled = false
+  default_to_oauth_authentication   = true
+  shared_access_key_enabled         = true
+  allow_nested_items_to_be_public   = true
+  allowed_copy_scope                = "PrivateLink"
+  is_hns_enabled                    = false
+  large_file_share_enabled          = true
   #local_user_enabled                 = true
-  sftp_enabled                       = false
-  nfsv3_enabled                      = false
+  sftp_enabled  = false
+  nfsv3_enabled = false
 
   # Blob service properties
   blob_properties = {
-    change_feed_enabled             = false
-   # change_feed_retention_in_days   = 7
-    default_service_version         = null
-    last_access_time_enabled        = false
-    versioning_enabled              = false
+    change_feed_enabled = false
+    # change_feed_retention_in_days   = 7
+    default_service_version  = null
+    last_access_time_enabled = false
+    versioning_enabled       = false
     container_delete_retention_policy = {
       days = 7
     }
@@ -58,6 +59,14 @@ module "sa" {
     }
   }
 
+  # Create the container used by Flex Consumption deployments
+  containers = {
+    deploymentpackage = {
+      name          = var.funcDeploymentContainerName
+      public_access = "None"
+    }
+  }
+
   # Tags
   tags = var.tags
 }
@@ -67,11 +76,11 @@ module "pe_sa_blob" {
   source  = "Azure/avm-res-network-privateendpoint/azurerm"
   version = "~> 0.2"
 
-  name                = "pe-${var.storage_account_name}--blob"
-  location            = var.location
-  resource_group_name = var.rg_name
-  network_interface_name        = "pe-${var.storage_account_name}-blob-nic"
-   # Use the module output and the correct input name
+  name                   = "pe-${var.storage_account_name}--blob"
+  location               = var.location
+  resource_group_name    = var.rg_name
+  network_interface_name = "pe-${var.storage_account_name}-blob-nic"
+  # Use the module output and the correct input name
   subnet_resource_id             = module.vnet.subnets["snet-privatelink"].resource_id
   private_connection_resource_id = module.sa.resource_id
 
@@ -79,8 +88,8 @@ module "pe_sa_blob" {
   subresource_names = ["blob"]
 
   # DNS group params
-  private_dns_zone_group_name  = "blob-dns"
- 
+  private_dns_zone_group_name = "blob-dns"
+
   tags = var.tags
 }
 

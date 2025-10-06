@@ -1,5 +1,6 @@
 # Terraform
 .terraform/
+.claude/
 *.tfstate
 *.tfstate.*
 crash.log

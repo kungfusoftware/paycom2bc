@@ -2,12 +2,12 @@ variable "rg_name" {
   type    = string
   default = "rg-paycom-bc-Integration-eus-staging"
 }
-variable "location"  { 
-    type = string 
-    default = "eastus" 
+variable "location" {
+  type    = string
+  default = "eastus"
 }
 variable "vnet_name" {
-  type    = string
+  type = string
 }
 variable "kv_name" {
   type    = string
@@ -24,9 +24,9 @@ variable "subnets" {
   description = "Map of subnet_name => CIDR"
   type        = map(string)
   default = {
-    "snet-func-integration" = "10.7.200.0/26" # for Function Apps Standard VNet integration (no NSG/UDR), IPs .0 - .63 usable .4 -.62
-    "snet-privatelink"    = "10.7.200.64/26" # for Private Endpoints,  IPs .64 - .127 usable .68 -.126
-    "snet-app"            = "10.7.200.128/26" # general workloads,  IPs .128 -191 .63 usable .132 -.190
+    "snet-func-integration" = "10.7.200.0/26"   # for Function Apps Standard VNet integration (no NSG/UDR), IPs .0 - .63 usable .4 -.62
+    "snet-privatelink"      = "10.7.200.64/26"  # for Private Endpoints,  IPs .64 - .127 usable .68 -.126
+    "snet-app"              = "10.7.200.128/26" # general workloads,  IPs .128 -191 .63 usable .132 -.190
   }
 }
 
@@ -52,7 +52,7 @@ variable "nsg_name" {
 # Names of subnets that should have the NSG associated
 variable "nsg_subnets" {
   type    = list(string)
-  default = []     # e.g., ["snet-app", "snet-backend"]
+  default = [] # e.g., ["snet-app", "snet-backend"]
 }
 
 # Keep schema flexible; start empty and add rules as needed
@@ -61,15 +61,15 @@ variable "nsg_security_rules" {
   default = {}
 }
 
-variable "client_id"       { 
-  type = string
-  sensitive = true 
+variable "client_id" {
+  type      = string
+  sensitive = true
 }
-variable "client_secret"   { 
-  type = string
-  sensitive = true 
-  }
-variable "tenant_id"       { type = string }
+variable "client_secret" {
+  type      = string
+  sensitive = true
+}
+variable "tenant_id" { type = string }
 variable "subscription_id" { type = string }
 
 variable "location_short" {
@@ -89,7 +89,7 @@ variable "law_retention_days" {
   default     = 30
 }
 
-#storage account 
+#storage account
 variable "storage_account_name" {
   description = "Storage account name for Function App (3-24 chars, lowercase, letters/digits)"
   type        = string
@@ -208,4 +208,21 @@ variable "function_app_additional_app_settings" {
   description = "Additional application settings to merge into the Function App configuration."
   type        = map(string)
   default     = {}
+}
+variable "runtime_name" {
+  description = "The name of the language worker runtime."
+  type        = string
+  default     = "node" # Allowed: dotnet-isolated, java, node, powershell, python
+}
+
+variable "runtime_version" {
+  description = "The version of the language worker runtime."
+  type        = string
+  default     = "20" # Supported versions: see https://aka.ms/flexfxversions
+}
+
+variable "funcDeploymentContainerName" {
+  description = "the name of the function app deployment container"
+  type        = string
+  default     = "deploymentpackage"
 }

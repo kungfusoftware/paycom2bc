@@ -23,15 +23,15 @@ module "nsg_app" {
 # Virtual Network + Subnets (AVM)
 # -------------------------
 module "vnet" {
-  source  = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version = "~> 0.10"
-  parent_id = module.rg.resource.id 
-  name                = var.vnet_name
- # resource_group_name = module.rg.name
-  location            = module.rg.resource.location
-  address_space       = var.address_space
-  dns_servers         = local.vnet_dns_servers
-  tags                = var.tags
+  source    = "Azure/avm-res-network-virtualnetwork/azurerm"
+  version   = "~> 0.10"
+  parent_id = module.rg.resource.id
+  name      = var.vnet_name
+  # resource_group_name = module.rg.name
+  location      = module.rg.resource.location
+  address_space = var.address_space
+  dns_servers   = local.vnet_dns_servers
+  tags          = var.tags
 
   # Translate var.subnets = { snet1 = "10.0.1.0/24", snet2 = "10.0.2.0/24", ... }
   subnets = {
@@ -49,9 +49,9 @@ module "vnet" {
 }
 
 # Helpful outputs
-output "vnet_id"    { value = module.vnet.resource_id }
+output "vnet_id" { value = module.vnet.resource_id }
 
-output "nsg_id"      { value = module.nsg_app.resource_id }
+output "nsg_id" { value = module.nsg_app.resource_id }
 locals {
   subnet_names_sorted = sort(keys(module.vnet.subnets))
 }

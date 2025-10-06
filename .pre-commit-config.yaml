@@ -1,0 +1,39 @@
+repos:
+  # General hygiene
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: detect-private-key
+
+  # Python (format + lint)
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        args: [--line-length=100]
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+
+  # Terraform (fmt/validate/lint/security/docs)
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.92.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+      - id: terraform_tflint
+ #     - id: terraform_trivy
+        args:
+        - --args=--config=.tflint.hcl
+ #       - --args=--call-module-type=all
+        - --args=--minimum-failure-severity=error
+      # Optional: keep README code blocks up to date with module inputs/outputs
+      # - id: terraform_docs

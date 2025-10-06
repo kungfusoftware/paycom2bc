@@ -18,6 +18,5 @@ module "rg" {
   # }
 }
 
-output "rg_id"   { value = module.rg.resource_id }
+output "rg_id" { value = module.rg.resource_id }
 output "rg_name" { value = module.rg.name }
-

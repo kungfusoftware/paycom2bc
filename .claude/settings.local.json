@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "Bash(xargs cat:*)",
+      "Bash(cat:*)",
+      "Bash(terraform:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
