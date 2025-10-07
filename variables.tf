@@ -49,6 +49,11 @@ variable "nsg_name" {
   type    = string
   default = "nsg-app"
 }
+
+variable "nat_gateway_name" {
+  type    = string
+  default = "ngw-app"
+}
 # Names of subnets that should have the NSG associated
 variable "nsg_subnets" {
   type    = list(string)

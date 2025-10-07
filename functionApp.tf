@@ -33,4 +33,26 @@ resource "azurerm_function_app_flex_consumption" "func" {
 
   site_config {
   }
+
+  virtual_network_subnet_id = module.vnet.subnets["snet-func-integration"].resource_id
+
+}
+
+############################################################
+# Private Endpoint for Function App
+############################################################
+resource "azurerm_private_endpoint" "func_pe" {
+  name                = "pe-${var.function_app_name}"
+  location            = var.location
+  resource_group_name = module.rg.name
+  subnet_id           = module.vnet.subnets["snet-privatelink"].resource_id
+
+  private_service_connection {
+    name                           = "${var.function_app_name}-psc"
+    private_connection_resource_id = azurerm_function_app_flex_consumption.func.id
+    is_manual_connection           = false
+    subresource_names              = ["sites"]
+  }
+
+  tags = var.tags
 }
