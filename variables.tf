@@ -62,8 +62,32 @@ variable "nsg_subnets" {
 
 # Keep schema flexible; start empty and add rules as needed
 variable "nsg_security_rules" {
-  type    = any
-  default = {}
+  type = any
+  default = {
+    "AllowSpecificIPs" = {
+      name                   = "AllowSpecificIPs"
+      priority               = 100
+      direction              = "Inbound"
+      access                 = "Allow"
+      protocol               = "*"
+      source_port_range      = "*"
+      destination_port_range = "*"
+      source_address_prefixes = [
+        "4.34.183.192/26",
+        "8.48.117.0/25",
+        "12.159.21.0/25",
+        "12.239.238.128/25",
+        "12.39.118.0/25",
+        "67.200.201.128/28",
+        "68.109.251.248/29",
+        "70.184.28.128/25",
+        "70.186.242.128/25",
+        "98.142.78.0/25",
+        "216.226.0.0/20"
+      ]
+      destination_address_prefix = "*"
+    }
+  }
 }
 
 variable "client_id" {
@@ -230,4 +254,78 @@ variable "funcDeploymentContainerName" {
   description = "the name of the function app deployment container"
   type        = string
   default     = "deploymentpackage"
+}
+
+variable "function_app_cors_allowed_origins" {
+  description = "List of allowed origins for CORS. Use ['*'] to allow all origins."
+  type        = list(string)
+  default     = ["*"]
+}
+
+variable "function_app_cors_support_credentials" {
+  description = "Whether CORS requests can include credentials"
+  type        = bool
+  default     = false
+}
+
+# ============================================
+# Windows 11 VM Variables
+# ============================================
+
+variable "vm_name" {
+  description = "Name of the Windows 11 virtual machine"
+  type        = string
+  default     = "vm-paycom"
+}
+
+variable "vm_size" {
+  description = "Size of the virtual machine"
+  type        = string
+  default     = "Standard_D2s_v3"
+}
+
+variable "vm_admin_username" {
+  description = "Admin username for the VM"
+  type        = string
+  default     = "azureadmin"
+}
+
+variable "vm_admin_password" {
+  description = "Admin password for the VM"
+  type        = string
+  sensitive   = true
+}
+
+variable "vm_os_disk_type" {
+  description = "OS disk storage account type"
+  type        = string
+  default     = "Standard_LRS"
+}
+
+variable "vm_os_disk_size_gb" {
+  description = "OS disk size in GB"
+  type        = number
+  default     = 127
+}
+
+# ============================================
+# Azure Bastion Variables
+# ============================================
+
+variable "bastion_name" {
+  description = "Name of the Azure Bastion host"
+  type        = string
+  default     = "bastion-paycom"
+}
+
+variable "bastion_sku" {
+  description = "SKU of the Azure Bastion (Basic or Standard)"
+  type        = string
+  default     = "Basic"
+}
+
+variable "bastion_subnet_cidr" {
+  description = "CIDR for Azure Bastion subnet (minimum /26 required)"
+  type        = string
+  default     = "10.7.200.192/26" # general workloads,  IPs .192 - 255 .63 usable .193 -.254
 }

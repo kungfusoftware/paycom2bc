@@ -111,3 +111,11 @@ output "subnets_list" {
     }
   ]
 }
+
+############################################################
+# NSG Association to snet-func-integration
+############################################################
+resource "azurerm_subnet_network_security_group_association" "func_integration_nsg" {
+  subnet_id                 = module.vnet.subnets["snet-func-integration"].resource_id
+  network_security_group_id = module.nsg_app.resource_id
+}

@@ -32,9 +32,13 @@ resource "azurerm_function_app_flex_consumption" "func" {
   instance_memory_in_mb       = 2048
 
   site_config {
+    cors {
+      allowed_origins     = var.function_app_cors_allowed_origins
+      support_credentials = var.function_app_cors_support_credentials
+    }
   }
 
-  virtual_network_subnet_id = module.vnet.subnets["snet-func-integration"].resource_id
+  # virtual_network_subnet_id = module.vnet.subnets["snet-func-integration"].resource_id
 
 }
 
