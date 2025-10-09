@@ -81,7 +81,7 @@ module "pe_sa_blob" {
   resource_group_name    = var.rg_name
   network_interface_name = "pe-${var.storage_account_name}-blob-nic"
   # Use the module output and the correct input name
-  subnet_resource_id             = module.vnet.subnets["snet-privatelink"].resource_id
+  subnet_resource_id             = module.subnet_privatelink.resource_id
   private_connection_resource_id = module.sa.resource_id
 
   # Blob subresource (add "dfs" too if you enabled HNS/ADLS)

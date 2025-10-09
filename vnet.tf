@@ -51,63 +51,109 @@ module "nsg_app" {
 }
 
 # -------------------------
-# Virtual Network + Subnets (AVM)
+# Virtual Network (AVM)
 # -------------------------
 module "vnet" {
-  source    = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version   = "~> 0.10"
-  parent_id = module.rg.resource.id
-  name      = var.vnet_name
-  # resource_group_name = module.rg.name
+  source        = "Azure/avm-res-network-virtualnetwork/azurerm"
+  version       = "~> 0.10"
+  parent_id     = module.rg.resource.id
+  name          = var.vnet_name
   location      = module.rg.resource.location
   address_space = var.address_space
   dns_servers   = local.vnet_dns_servers
   tags          = var.tags
 
-  # Translate var.subnets = { snet1 = "10.0.1.0/24", snet2 = "10.0.2.0/24", ... }
-  subnets = {
-    for name, prefix in var.subnets : name => {
-      name             = name
-      address_prefixes = [prefix]
+  # Empty subnets - will be created as separate modules below
+  subnets = {}
+}
 
-      # Subnet delegation for Function Apps
-      delegation = name == "snet-func-integration" ? [
-        {
-          name = "delegation"
-          service_delegation = {
-            name = "Microsoft.App/environments"
-          }
-        }
-      ] : []
+############################################################
+# Subnet: snet-func-integration (AVM)
+############################################################
+module "subnet_func_integration" {
+  source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
+  version = "~> 0.10"
 
-      # NAT Gateway association for Function Apps subnet
-      nat_gateway = name == "snet-func-integration" ? {
-        id = azurerm_nat_gateway.nat.id
-      } : null
+  parent_id        = module.vnet.resource_id
+  name             = "snet-func-integration"
+  address_prefixes = [var.subnets["snet-func-integration"]]
 
-      # If this subnet will host Private Endpoints, uncomment:
-      # private_endpoint_network_policies = "Disabled"
-      #
-      # If this is a Logic Apps Standard VNet Integration subnet,
-      # keep it dedicated (no NSG/UDR).
-    }
+  # NAT Gateway association
+  nat_gateway = {
+    id = azurerm_nat_gateway.nat.id
   }
+
+  # Delegation for Container Apps environments
+  delegation = [{
+    name = "Microsoft.App.environments"
+    service_delegation = {
+      name = "Microsoft.App/environments"
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/join/action"
+      ]
+    }
+  }]
+}
+
+############################################################
+# Subnet: snet-privatelink (AVM)
+############################################################
+module "subnet_privatelink" {
+  source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
+  version = "~> 0.10"
+
+  parent_id        = module.vnet.resource_id
+  name             = "snet-privatelink"
+  address_prefixes = [var.subnets["snet-privatelink"]]
+
+  # For Private Endpoints
+  private_endpoint_network_policies = "Disabled"
+}
+
+############################################################
+# Subnet: snet-app (AVM)
+############################################################
+module "subnet_app" {
+  source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
+  version = "~> 0.10"
+
+  parent_id        = module.vnet.resource_id
+  name             = "snet-app"
+  address_prefixes = [var.subnets["snet-app"]]
+}
+
+#
+############################################################
+# Subnet: Dedicated subnet for Azure Bastion (must be named AzureBastionSubnet)
+############################################################
+module "azurerm_subnet" {
+  source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
+  version = "~> 0.10"
+
+  name             = "AzureBastionSubnet"
+  parent_id        = module.vnet.resource_id
+  address_prefixes = [var.bastion_subnet_cidr]
 }
 
 # Helpful outputs
 output "vnet_id" { value = module.vnet.resource_id }
 
 output "nsg_id" { value = module.nsg_app.resource_id }
-locals {
-  subnet_names_sorted = sort(keys(module.vnet.subnets))
-}
 
 output "subnets_list" {
   description = "List of subnets with name and id"
   value = [
-    for name in local.subnet_names_sorted : {
-      name = name
-      id   = try(module.vnet.subnets[name].resource_id, module.vnet.subnets[name].id)
+    {
+      name = "snet-func-integration"
+      id   = module.subnet_func_integration.resource_id
+    },
+    {
+      name = "snet-privatelink"
+      id   = module.subnet_privatelink.resource_id
+    },
+    {
+      name = "snet-app"
+      id   = module.subnet_app.resource_id
     }
   ]
 }
@@ -116,6 +162,6 @@ output "subnets_list" {
 # NSG Association to snet-func-integration
 ############################################################
 resource "azurerm_subnet_network_security_group_association" "func_integration_nsg" {
-  subnet_id                 = module.vnet.subnets["snet-func-integration"].resource_id
+  subnet_id                 = module.subnet_func_integration.resource_id
   network_security_group_id = module.nsg_app.resource_id
 }

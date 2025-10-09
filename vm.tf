@@ -21,7 +21,7 @@ resource "azurerm_network_interface" "vm_nic" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = module.vnet.subnets["snet-app"].resource_id
+    subnet_id                     = module.subnet_app.resource_id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.vm_pip.id
   }
@@ -64,14 +64,6 @@ resource "azurerm_windows_virtual_machine" "win11_vm" {
 # Azure Bastion for Secure RDP Access
 ############################################################
 
-# Dedicated subnet for Azure Bastion (must be named AzureBastionSubnet)
-resource "azurerm_subnet" "bastion" {
-  name                 = "AzureBastionSubnet"
-  resource_group_name  = module.rg.name
-  virtual_network_name = module.vnet.name
-  address_prefixes     = [var.bastion_subnet_cidr]
-}
-
 # Public IP for Bastion
 resource "azurerm_public_ip" "bastion_pip" {
   name                = "pip-bastion"
@@ -92,7 +84,7 @@ resource "azurerm_bastion_host" "bastion" {
 
   ip_configuration {
     name                 = "configuration"
-    subnet_id            = azurerm_subnet.bastion.id
+    subnet_id            = module.azurerm_subnet.resource_id
     public_ip_address_id = azurerm_public_ip.bastion_pip.id
   }
 }

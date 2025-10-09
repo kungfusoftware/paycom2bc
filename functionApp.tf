@@ -31,6 +31,8 @@ resource "azurerm_function_app_flex_consumption" "func" {
   maximum_instance_count      = 50
   instance_memory_in_mb       = 2048
 
+  public_network_access_enabled = false
+
   site_config {
     cors {
       allowed_origins     = var.function_app_cors_allowed_origins
@@ -38,8 +40,8 @@ resource "azurerm_function_app_flex_consumption" "func" {
     }
   }
 
-  # virtual_network_subnet_id = module.vnet.subnets["snet-func-integration"].resource_id
-
+  virtual_network_subnet_id = module.subnet_func_integration.resource_id
+  # We have to manually do the association
 }
 
 ############################################################
@@ -49,7 +51,7 @@ resource "azurerm_private_endpoint" "func_pe" {
   name                = "pe-${var.function_app_name}"
   location            = var.location
   resource_group_name = module.rg.name
-  subnet_id           = module.vnet.subnets["snet-privatelink"].resource_id
+  subnet_id           = module.subnet_privatelink.resource_id
 
   private_service_connection {
     name                           = "${var.function_app_name}-psc"

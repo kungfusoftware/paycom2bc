@@ -37,7 +37,7 @@ module "kv" {
   # Private Endpoint inside your Private Link subnet
   private_endpoints = {
     kv = {
-      subnet_resource_id            = module.vnet.subnets["snet-privatelink"].resource_id
+      subnet_resource_id            = module.subnet_privatelink.resource_id
       private_dns_zone_resource_ids = [azurerm_private_dns_zone.kv.id]
       # optional: name, ip_configurations, tags, lock, role_assignments...
     }

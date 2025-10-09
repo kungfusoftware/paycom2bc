@@ -329,3 +329,8 @@ variable "bastion_subnet_cidr" {
   type        = string
   default     = "10.7.200.192/26" # general workloads,  IPs .192 - 255 .63 usable .193 -.254
 }
+variable "snet-func-integration_cidr" {
+  description = "CIDR for Azure Bastion subnet (minimum /26 required)"
+  type        = string
+  default     = "10.7.200.192/26" # general workloads,  IPs .192 - 255 .63 usable .193 -.254
+}
