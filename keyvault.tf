@@ -1,5 +1,11 @@
 data "azurerm_client_config" "current" {}
 
+# Random single digit for Key Vault name uniqueness
+resource "random_integer" "kv_suffix" {
+  min = 0
+  max = 9
+}
+
 # --- Private DNS zone for Key Vault Private Link (optional: reuse an existing one instead) ---
 resource "azurerm_private_dns_zone" "kv" {
   name                = "privatelink.vaultcore.azure.net"
@@ -21,7 +27,7 @@ module "kv" {
   source  = "Azure/avm-res-keyvault-vault/azurerm"
   version = "~> 0.10.0"
 
-  name                = var.kv_name
+  name                = "${var.kv_name}${random_integer.kv_suffix.result}"
   location            = module.rg.resource.location
   resource_group_name = module.rg.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
